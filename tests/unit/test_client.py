@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import tempfile
 import threading
 import unittest
@@ -15,7 +16,7 @@ import numpy as np
 import pandas as pd
 from aiohttp import web
 
-from mhq import ITMatrixV1, ITStream, ReturnType
+from mhq import ITMATRIX_API_URL, ITMatrixV1, ITStream, ReturnType
 from mhq.auth import resolve_base_url
 from mhq.codec import convert_result, decode_public, decode_ws_message, to_builtin
 from mhq.enums import normalize_return_type
@@ -30,6 +31,10 @@ from mhq.transport import AiohttpTransport, SyncTransport
 
 _ENCODER = msgspec.json.Encoder()
 _DECODER = msgspec.json.Decoder()
+LIVE_ITMATRIX_V1 = os.getenv("MHQ_TEST_LIVE_V1") == "1"
+LIVE_ITSTREAM = os.getenv("MHQ_TEST_LIVE_STREAM") == "1"
+ITMATRIX_V1_TEST_BASE_URL = ITMATRIX_API_URL if LIVE_ITMATRIX_V1 else "http://example.test"
+ITSTREAM_TEST_BASE_URL = ITMATRIX_API_URL if LIVE_ITSTREAM else "http://example.test"
 
 
 class FakeSyncTransport:
@@ -70,9 +75,9 @@ class ClientTests(unittest.TestCase):
             key_file.write_text("itm_file\n", encoding="utf-8")
 
             self.assertEqual(ITMatrixV1(key_file=str(key_file))._key, "itm_file")
-            with patch.dict("os.environ", {"ITM_KEY": "itm_env", "ITM_BASE_URL": "http://env.test"}):
+            with patch.dict("os.environ", {"ITM_KEY": "itm_env", "ITM_BASE_URL": ITMATRIX_V1_TEST_BASE_URL}):
                 self.assertEqual(ITMatrixV1()._key, "itm_env")
-                self.assertEqual(resolve_base_url(None), "http://env.test")
+                self.assertEqual(resolve_base_url(None), ITMATRIX_V1_TEST_BASE_URL.rstrip("/"))
             with (
                 patch.dict("os.environ", {}, clear=True),
                 patch("pathlib.Path.cwd", return_value=Path(tmp) / "none"),
@@ -85,7 +90,7 @@ class ClientTests(unittest.TestCase):
     def test_sync_client_routes_every_public_data_method(self) -> None:
         """The sync public methods build documented paths and decode structs."""
 
-        client = ITMatrixV1("itm_test", base_url="http://example.test")
+        client = ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL)
         transport = FakeSyncTransport()
         client._sync_transport = transport
 
@@ -125,20 +130,20 @@ class ClientTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             client.economy("missing")
 
-        with ITMatrixV1("itm_test", base_url="http://example.test") as managed:
+        with ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL) as managed:
             managed._sync_transport = FakeSyncTransport()
             self.assertEqual(managed.available("symbols")[0], "SPY")
         with self.assertRaises(RuntimeError):
-            ITMatrixV1("itm_test", base_url="http://example.test")._get_sync(list[str], "/symbols")
+            ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL)._get_sync(list[str], "/symbols")
 
     def test_return_type_conversions_and_aliases(self) -> None:
         """Data methods can return structs, pandas frames, or NumPy columns."""
 
-        frame_client = ITMatrixV1("itm_test", base_url="http://example.test", return_type=ReturnType.DATAFRAME)
+        frame_client = ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, return_type=ReturnType.DATAFRAME)
         frame_client._sync_transport = FakeSyncTransport()
         frame = frame_client.stock_bars("spy", multiplier=1, timespan="minute", from_="2026-05-01", to="2026-05-02")
 
-        dict_client = ITMatrixV1("itm_test", base_url="http://example.test", return_type="dict")
+        dict_client = ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, return_type="dict")
         dict_client._sync_transport = FakeSyncTransport()
         columns = dict_client.stock_bars("spy", multiplier=1, timespan="minute", from_="2026-05-01", to="2026-05-02")
 
@@ -185,13 +190,13 @@ class ClientTests(unittest.TestCase):
         """Async mode exposes awaitable data methods without thread wrapping."""
 
         async def run_case() -> None:
-            async with ITMatrixV1("itm_test", base_url="http://example.test", async_mode=True) as client:
+            async with ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, async_mode=True) as client:
                 client._async_transport = FakeAsyncTransport()
                 result = await client.spot("spy")
                 self.assertIsInstance(result, Spot)
                 self.assertEqual(result.symbol, "SPY")
 
-            alias = ITMatrixV1("itm_test", base_url="http://example.test", **{"async": True})
+            alias = ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, **{"async": True})
             alias._async_transport = FakeAsyncTransport()
             self.assertEqual((await alias.available("symbols"))[0], "SPY")
             self.assertEqual((await alias.available("expirations", symbol="spy"))["symbol"], "SPY")
@@ -199,9 +204,9 @@ class ClientTests(unittest.TestCase):
             with self.assertRaises(TypeError):
                 await alias.available("expirations")
             await alias.close()
-            await ITMatrixV1("itm_test", base_url="http://example.test", async_mode=True).close()
+            await ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, async_mode=True).close()
             with self.assertRaises(RuntimeError):
-                broken = ITMatrixV1("itm_test", base_url="http://example.test", async_mode=True)
+                broken = ITMatrixV1("itm_test", base_url=ITMATRIX_V1_TEST_BASE_URL, async_mode=True)
                 await broken._get_async(list[str], "/symbols")
 
         asyncio.run(run_case())
@@ -325,7 +330,7 @@ class ClientTests(unittest.TestCase):
         """The stream receiver tolerates non-data and error frames."""
 
         async def run_case() -> None:
-            stream = ITStream("itm_test", base_url="http://example.test")
+            stream = ITStream("itm_test", base_url=ITSTREAM_TEST_BASE_URL)
             sub = stream.spot("SPY")
             stream._subs[sub._key] = {sub}
             stream._ws = FakeWebSocket(
@@ -338,6 +343,28 @@ class ClientTests(unittest.TestCase):
 
             await stream._receive()
             await stream._stop(stream.spot("MSFT"))
+
+        asyncio.run(run_case())
+
+    @unittest.skipUnless(LIVE_ITMATRIX_V1, "Set MHQ_TEST_LIVE_V1=1 to run live ITMatrixV1 smoke tests.")
+    def test_live_itmatrix_v1_symbols(self) -> None:
+        """Run a live `/symbols` smoke test against the configured real API host."""
+
+        client = ITMatrixV1(base_url=ITMATRIX_V1_TEST_BASE_URL, timeout=15)
+        symbols = client.available("symbols")
+
+        self.assertIsInstance(symbols, list)
+        self.assertGreater(len(symbols), 0)
+
+    @staticmethod
+    @unittest.skipUnless(LIVE_ITSTREAM, "Set MHQ_TEST_LIVE_STREAM=1 to run live socket smoke tests.")
+    def test_live_itstream_connects() -> None:
+        """Run a live socket subscription smoke test when market conditions make it useful."""
+
+        async def run_case() -> None:
+            async with ITStream(base_url=ITSTREAM_TEST_BASE_URL, timeout=15) as stream:
+                sub = await stream.spot("SPY")
+                await sub.stop()
 
         asyncio.run(run_case())
 

@@ -1,8 +1,9 @@
 tests/unit/test_client.py: ClientTests - Exercises the public client package through local fixtures, covering key resolution, sync and async `/api/v1` method routing, return conversion modes, transport errors, and WebSocket subscriptions without relying on the live deployment URL.
 - mhq.client: General public `ITMatrixV1` behavior.
-	- ITMatrixV1.__init__: Covers explicit keys, `.itmkey` files, environment keys, environment base URLs, async alias handling, and unknown option rejection.
+	- ITMatrixV1.__init__: Covers explicit keys, `.itmkey` files, environment keys, default/live base URL constants, environment base URLs, async alias handling, and unknown option rejection.
 	- ITMatrixV1.available: Covers `symbols`, `expirations`, and fundamentals ticker availability in sync and async modes, including missing-symbol and unknown-endpoint errors.
 	- ITMatrixV1 spot/option/gex/gex_matrix/gex_history/stock_bars/option_bars/fundamentals/economy: Covers documented public endpoint path construction and msgspec result decoding.
+	- ITMatrixV1 live smoke: Covers the actual public base URL through `MHQ_TEST_LIVE_V1=1`, using `.itmkey` and `/symbols`.
 	- ITMatrixV1.close/context managers: Covers sync and async close paths plus context-manager entry/exit behavior.
 - mhq.codec: General response decoding and return conversion behavior.
 	- decode_public: Covers standard envelopes, direct payloads, envelope errors, and middleware-style error bodies.
@@ -14,6 +15,7 @@ tests/unit/test_client.py: ClientTests - Exercises the public client package thr
 - mhq.stream: WebSocket subscription behavior.
 	- ITStream.subscribe/spot/gex/options/close: Covers shared socket subscription counting, channel-specific payloads, close-all cleanup, and URL derivation through local WebSocket fixtures.
 	- ITSubscription start/stop/async iteration/matches: Covers awaitable starts, duplicate starts, stop signals, shared subscriber routing, option and GEX matching, inactive feeds, and defensive receiver branches.
+	- ITStream live smoke: Is guarded by `MHQ_TEST_LIVE_STREAM=1` so live socket checks can be enabled separately from HTTP checks.
 
 Unreachable or intentionally residual coverage notes:
 - mhq.codec has one partial branch in column-name de-duplication where every practical non-empty tabular conversion still enters the first-seen path; total package coverage remains 99%.

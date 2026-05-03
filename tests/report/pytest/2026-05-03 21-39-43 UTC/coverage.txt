@@ -1,0 +1,10 @@
+_______________ coverage: platform win32, python 3.13.9-final-0 _______________
+
+Name           Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------
+mhq\codec.py     107      0     44      1    99%   179->178
+----------------------------------------------------------
+TOTAL            776      0    182      1    99%
+
+8 files skipped due to complete coverage.
+======================== 8 passed, 2 skipped in 1.93s =========================

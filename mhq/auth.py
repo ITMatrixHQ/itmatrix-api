@@ -5,6 +5,8 @@ from pathlib import Path
 
 from mhq.exceptions import ITMatrixConfigError
 
+ITMATRIX_API_URL = "https://api.itmatrixhq.com/"
+
 
 def resolve_key(key: str | None, key_file: str | os.PathLike[str] | None) -> str:
     """Resolve an API key from an explicit value, environment, or `.itmkey` file."""
@@ -23,4 +25,4 @@ def resolve_key(key: str | None, key_file: str | os.PathLike[str] | None) -> str
 def resolve_base_url(base_url: str | None) -> str:
     """Resolve and normalize the HTTP base URL."""
 
-    return (base_url or os.getenv("ITM_BASE_URL") or "https://api.itmatrix.io").rstrip("/")
+    return (base_url or os.getenv("ITM_BASE_URL") or ITMATRIX_API_URL).rstrip("/")

@@ -1,4 +1,4 @@
-mhq/auth.py resolves API keys and base URLs for HTTP and WebSocket clients.
+mhq/auth.py resolves API keys and base URLs for HTTP and WebSocket clients, and stores the default live ITMatrix API URL.
 - os : Reads `ITM_KEY` and `ITM_BASE_URL` from the process environment.
 - pathlib.Path : Checks and reads the fallback `.itmkey` file from the working root.
 - mhq.exceptions.ITMatrixConfigError : Raises a package-specific error when no key source is available.
