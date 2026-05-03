@@ -1,0 +1,35 @@
+extend = "pyproject.toml"
+
+preview = true
+
+[lint]
+extend-select = [
+    "I", "E4", "E5", "E7", "E9", "F", "B", "Q", "FA",
+
+  "UP",    # pyupgrade: modern syntax / redundant legacy constructs
+  "PERF",  # perflint-derived performance checks
+  "FURB",  # refurb-derived modernization / simplification checks
+  "C4",    # flake8-comprehensions: avoid unnecessary collection construction
+  "SIM",   # flake8-simplify: branch / boolean / control-flow simplification
+  "PIE",   # flake8-pie: assorted pointless constructs
+  "RET",   # flake8-return: unnecessary else/return/control-flow noise
+  "RUF",   # Ruff-specific rules, including several performance/redundancy checks
+  "ASYNC",
+
+  # Pylint-derived errors/warnings/refactors, but not convention/docstyle.
+  "PLE",
+  "PLW",
+  "PLR",
+]
+
+extend-ignore = [
+  # Keep these ignored from your base config too, but this is useful documentation
+  # when running the aggressive profile directly.
+  "E701",
+  "E731",
+  "Q000",
+  "Q001",
+
+  # Pylint complexity/shape rules that are often noisy during adoption.
+  "PLR09",   # too-many-* family
+]
