@@ -43,7 +43,7 @@ def decode_public(data: bytes, result_schema: Any) -> Any:
     except msgspec.ValidationError:
         return _decode_direct_or_error(data, result_schema)
     if envelope.status != "ok":
-        raise ITMatrixAPIError(envelope.error or "ITMatrix API returned an error.", request_id=envelope.request_id)
+        raise ITMatrixAPIError(envelope.error or "MHQ API returned an error.", request_id=envelope.request_id)
     return envelope.results
 
 
@@ -86,7 +86,7 @@ def _decode_direct_or_error(data: bytes, result_schema: Any) -> Any:
 
 
 def _rows_from_value(value: Any) -> list[dict[str, Any]]:
-    """Flatten common ITMatrix result shapes into tabular records."""
+    """Flatten common MHQ result shapes into tabular records."""
 
     built = to_builtin(value)
     if built is None:

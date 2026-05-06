@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Market Field Atlas</title>
+  <style>
+    :root {
+      --paper: #eee2c4;
+      --paper-2: #d7c59b;
+      --ink: #17120d;
+      --ash: #5e5545;
+      --rule: #9b8660;
+      --blue: #123d88;
+      --red: #9c2031;
+      --acid: #c9ff4a;
+      --gold: #c58b1b;
+      --green: #176b45;
+      --shadow: rgba(23, 18, 13, .18);
+      --display: "Bodoni 72", "Didot", "Georgia", serif;
+      --body: "Aptos", "Segoe UI", sans-serif;
+      --mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--body);
+      background:
+        radial-gradient(circle at 18% 16%, rgba(201, 255, 74, .22), transparent 18rem),
+        radial-gradient(circle at 86% 22%, rgba(18, 61, 136, .20), transparent 24rem),
+        repeating-linear-gradient(90deg, rgba(23, 18, 13, .045) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(0deg, rgba(23, 18, 13, .035) 0 1px, transparent 1px 24px),
+        linear-gradient(135deg, var(--paper), var(--paper-2));
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      mix-blend-mode: multiply;
+      opacity: .45;
+      background-image:
+        radial-gradient(circle, rgba(23, 18, 13, .16) 0 1px, transparent 1px);
+      background-size: 7px 7px;
+    }
+
+    .atlas {
+      width: min(1500px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 132px 1fr 320px;
+      gap: 18px;
+      align-items: stretch;
+      min-height: 220px;
+      margin-bottom: 18px;
+    }
+
+    .seal,
+    .title-card,
+    .quote-card,
+    .plate,
+    .legend-strip {
+      border: 2px solid var(--ink);
+      background: rgba(238, 226, 196, .72);
+      box-shadow: 9px 9px 0 var(--shadow);
+    }
+
+    .seal {
+      display: grid;
+      place-items: center;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      padding: 16px 8px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font: 900 1rem var(--mono);
+    }
+
+    .title-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px clamp(22px, 4vw, 54px);
+      background:
+        linear-gradient(90deg, rgba(238, 226, 196, .92), rgba(238, 226, 196, .72)),
+        radial-gradient(circle at 88% 28%, rgba(156, 32, 49, .22), transparent 16rem);
+    }
+
+    .title-card::after {
+      position: absolute;
+      right: -36px;
+      bottom: -88px;
+      width: 330px;
+      height: 330px;
+      border: 2px solid var(--blue);
+      border-radius: 47% 53% 45% 55%;
+      content: "";
+      opacity: .65;
+      transform: rotate(-18deg);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font: 900 .86rem var(--mono);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0;
+      font: 900 clamp(3rem, 8vw, 8.8rem)/.76 var(--display);
+      letter-spacing: -.08em;
+      text-transform: uppercase;
+    }
+
+    .dek {
+      max-width: 700px;
+      margin: 18px 0 0;
+      color: var(--ash);
+      font-size: clamp(1.05rem, 2vw, 1.32rem);
+    }
+
+    .quote-card {
+      display: grid;
+      align-content: space-between;
+      padding: 18px;
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .quote-card strong {
+      display: block;
+      color: var(--acid);
+      font: 900 clamp(2.6rem, 6vw, 5.4rem)/.78 var(--display);
+      letter-spacing: -.06em;
+    }
+
+    .quote-card span {
+      color: var(--paper-2);
+      font: 800 .82rem var(--mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .atlas-grid {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .plate {
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    .plate h2 {
+      margin: 0 0 14px;
+      font: 900 1.05rem var(--mono);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .plate-number {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      color: var(--rule);
+      font: 900 .82rem var(--mono);
+      letter-spacing: .12em;
+    }
+
+    .field-map {
+      min-height: 610px;
+      background:
+        radial-gradient(ellipse at 54% 42%, rgba(201, 255, 74, .30), transparent 15rem),
+        radial-gradient(ellipse at 40% 72%, rgba(156, 32, 49, .18), transparent 17rem),
+        linear-gradient(180deg, rgba(255, 255, 255, .14), transparent);
+    }
+
+    .map-wrap {
+      display: grid;
+      grid-template-columns: 104px 1fr 100px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .strike-ruler {
+      display: grid;
+      grid-template-rows: repeat(9, 1fr);
+      align-items: center;
+      color: var(--blue);
+      font: 900 .95rem var(--mono);
+      text-align: right;
+    }
+
+    .strike-ruler span {
+      border-top: 1px solid rgba(23, 18, 13, .24);
+      padding-top: 5px;
+    }
+
+    .terrain {
+      position: relative;
+      min-height: 560px;
+      border: 2px solid var(--ink);
+      background:
+        conic-gradient(from 70deg at 52% 48%, transparent, rgba(18, 61, 136, .18), transparent 28%),
+        repeating-radial-gradient(ellipse at 50% 50%, transparent 0 21px, rgba(23, 18, 13, .16) 22px 24px),
+        rgba(238, 226, 196, .45);
+      clip-path: polygon(4% 2%, 96% 0, 100% 88%, 86% 100%, 3% 94%, 0 12%);
+    }
+
+    .contour {
+      position: absolute;
+      border: 2px solid currentColor;
+      border-radius: 48% 52% 55% 45%;
+      opacity: .88;
+    }
+
+    .c1 {
+      inset: 7% 14% 15% 18%;
+      color: rgba(18, 61, 136, .78);
+      transform: rotate(-12deg);
+    }
+
+    .c2 {
+      inset: 18% 22% 25% 27%;
+      color: rgba(23, 107, 69, .78);
+      transform: rotate(16deg);
+    }
+
+    .c3 {
+      inset: 31% 31% 35% 34%;
+      color: rgba(197, 139, 27, .90);
+      transform: rotate(-28deg);
+    }
+
+    .fault {
+      position: absolute;
+      left: 16%;
+      right: 9%;
+      height: 18px;
+      border: 2px solid var(--ink);
+      border-left: 0;
+      border-right: 0;
+      background: var(--acid);
+      transform: rotate(-7deg);
+      box-shadow: 0 0 0 6px rgba(201, 255, 74, .22);
+    }
+
+    .f1 {
+      top: 42%;
+    }
+
+    .f2 {
+      top: 61%;
+      background: var(--red);
+      box-shadow: 0 0 0 6px rgba(156, 32, 49, .16);
+    }
+
+    .glyph {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 118px;
+      height: 118px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--ink);
+      font: 900 .78rem var(--mono);
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 7px 7px 0 var(--shadow);
+    }
+
+    .g-control {
+      top: 38%;
+      left: 51%;
+      background: var(--acid);
+    }
+
+    .g-resistance {
+      top: 15%;
+      right: 12%;
+      color: var(--paper);
+      background: var(--blue);
+    }
+
+    .g-support {
+      bottom: 13%;
+      left: 18%;
+      color: var(--paper);
+      background: var(--red);
+    }
+
+    .side-notes {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .note {
+      border: 2px solid var(--ink);
+      padding: 10px;
+      background: rgba(238, 226, 196, .78);
+      font: 800 .74rem/1.28 var(--mono);
+      text-transform: uppercase;
+    }
+
+    .note b {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 1.2rem;
+    }
+
+    .sediment {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sediment-row {
+      display: grid;
+      grid-template-columns: 66px 1fr 92px;
+      gap: 10px;
+      align-items: center;
+      font-family: var(--mono);
+      font-weight: 900;
+    }
+
+    .core {
+      height: 18px;
+      border: 2px solid var(--ink);
+      background:
+        linear-gradient(90deg, var(--red) 0 var(--neg), var(--paper) var(--neg) var(--pivot), var(--blue) var(--pivot) 100%);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .20);
+    }
+
+    .value {
+      text-align: right;
+    }
+
+    .right-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .signal-board {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .signal {
+      min-height: 142px;
+      border: 2px solid var(--ink);
+      padding: 14px;
+      background: rgba(238, 226, 196, .72);
+    }
+
+    .signal span {
+      display: block;
+      color: var(--ash);
+      font: 900 .72rem var(--mono);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .signal strong {
+      display: block;
+      margin: 8px 0;
+      font: 900 2.6rem/.82 var(--display);
+      letter-spacing: -.06em;
+    }
+
+    .signal:nth-child(2) strong {
+      color: var(--green);
+    }
+
+    .signal:nth-child(3) strong {
+      color: var(--blue);
+    }
+
+    .signal:nth-child(4) strong {
+      color: var(--red);
+    }
+
+    .tide-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: .82rem;
+    }
+
+    .tide-table th,
+    .tide-table td {
+      padding: 9px 7px;
+      border-bottom: 1px solid var(--rule);
+      text-align: left;
+    }
+
+    .tide-table th {
+      color: var(--blue);
+      text-transform: uppercase;
+    }
+
+    .phase {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 8px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      vertical-align: -1px;
+      background: var(--acid);
+    }
+
+    .phase.red {
+      background: var(--red);
+    }
+
+    .phase.blue {
+      background: var(--blue);
+    }
+
+    .scenario-wheel {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .wheel {
+      aspect-ratio: 1;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--blue) 0 34%, var(--acid) 34% 61%, var(--red) 61% 100%);
+      box-shadow: inset 0 0 0 18px var(--paper), inset 0 0 0 20px var(--ink);
+    }
+
+    .scenario-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font: 800 .95rem/1.28 var(--body);
+    }
+
+    .scenario-list li {
+      padding: 11px 12px;
+      border-left: 8px solid var(--ink);
+      background: rgba(255, 255, 255, .18);
+    }
+
+    .legend-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 18px;
+      font: 900 .78rem var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .legend-strip div {
+      padding: 14px;
+      border-right: 2px solid var(--ink);
+    }
+
+    .legend-strip div:last-child {
+      border-right: 0;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-right: 8px;
+      border: 2px solid var(--ink);
+      vertical-align: -3px;
+    }
+
+    .blue {
+      background: var(--blue);
+    }
+
+    .red {
+      background: var(--red);
+    }
+
+    .acid {
+      background: var(--acid);
+    }
+
+    .gold {
+      background: var(--gold);
+    }
+
+    @media (max-width: 1050px) {
+      .masthead,
+      .atlas-grid,
+      .scenario-wheel {
+        grid-template-columns: 1fr;
+      }
+
+      .seal {
+        min-height: 76px;
+        writing-mode: horizontal-tb;
+        transform: none;
+      }
+
+      .legend-strip,
+      .signal-board,
+      .map-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="atlas">
+    <header class="masthead">
+      <aside class="seal">MHQ FIELD SPECIMEN 05 MAY 2026</aside>
+      <section class="title-card">
+        <p class="eyebrow">A static market report in the form of a liquidity atlas</p>
+        <h1>Gamma Weather Over SPY</h1>
+        <p class="dek">
+          Not a terminal, not a dashboard. This plate treats price levels like terrain:
+          positive gamma as high pressure, negative gamma as fault lines, and the pivot
+          as a fluorescent survey pin in the middle of the map.
+        </p>
+      </section>
+      <aside class="quote-card">
+        <span>Survey pin</span>
+        <strong>720</strong>
+        <span>spot near the control band</span>
+      </aside>
+    </header>
+
+    <section class="atlas-grid">
+      <article class="plate field-map">
+        <span class="plate-number">PLATE 01</span>
+        <h2>Liquidity Cartogram</h2>
+        <div class="map-wrap">
+          <div class="strike-ruler">
+            <span>760</span>
+            <span>745</span>
+            <span>735</span>
+            <span>725</span>
+            <span>720</span>
+            <span>711</span>
+            <span>700</span>
+            <span>685</span>
+            <span>670</span>
+          </div>
+          <div class="terrain" aria-label="Abstract contour map of SPY gamma levels">
+            <div class="contour c1"></div>
+            <div class="contour c2"></div>
+            <div class="contour c3"></div>
+            <div class="fault f1"></div>
+            <div class="fault f2"></div>
+            <div class="glyph g-resistance">upper shelf<br>735</div>
+            <div class="glyph g-control">survey pin<br>720</div>
+            <div class="glyph g-support">fault shelf<br>700</div>
+          </div>
+          <div class="side-notes">
+            <div class="note"><b>+65.4M</b>net gex dollars</div>
+            <div class="note"><b>711.65</b>zero gamma meridian</div>
+            <div class="note"><b>725</b>first ridge above spot</div>
+            <div class="note"><b>700</b>first red fault shelf</div>
+          </div>
+        </div>
+      </article>
+
+      <div class="right-stack">
+        <article class="plate">
+          <span class="plate-number">PLATE 02</span>
+          <h2>Pressure Readings</h2>
+          <div class="signal-board">
+            <div class="signal">
+              <span>last print</span>
+              <strong>720.04</strong>
+              <small>updated from v1 spot payload</small>
+            </div>
+            <div class="signal">
+              <span>net field</span>
+              <strong>+65.4M</strong>
+              <small>positive dealer pressure</small>
+            </div>
+            <div class="signal">
+              <span>ridge top</span>
+              <strong>735</strong>
+              <small>upside shelf to reclaim</small>
+            </div>
+            <div class="signal">
+              <span>fault line</span>
+              <strong>700</strong>
+              <small>downside expansion risk</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="plate">
+          <span class="plate-number">PLATE 03</span>
+          <h2>Strike Sediment Core</h2>
+          <div class="sediment">
+            <div class="sediment-row"><span>735</span><div class="core" style="--neg: 8%; --pivot: 76%"></div><span class="value">+42.1M</span></div>
+            <div class="sediment-row"><span>730</span><div class="core" style="--neg: 16%; --pivot: 68%"></div><span class="value">+28.7M</span></div>
+            <div class="sediment-row"><span>725</span><div class="core" style="--neg: 21%; --pivot: 63%"></div><span class="value">+17.2M</span></div>
+            <div class="sediment-row"><span>720</span><div class="core" style="--neg: 34%; --pivot: 54%"></div><span class="value">+8.6M</span></div>
+            <div class="sediment-row"><span>711</span><div class="core" style="--neg: 50%; --pivot: 51%"></div><span class="value">0 line</span></div>
+            <div class="sediment-row"><span>705</span><div class="core" style="--neg: 64%; --pivot: 67%"></div><span class="value">-9.4M</span></div>
+            <div class="sediment-row"><span>700</span><div class="core" style="--neg: 78%; --pivot: 81%"></div><span class="value">-21.8M</span></div>
+          </div>
+        </article>
+
+        <article class="plate">
+          <span class="plate-number">PLATE 04</span>
+          <h2>Regime Tide Table</h2>
+          <table class="tide-table">
+            <thead>
+              <tr><th>Band</th><th>Behavior</th><th>Preferred posture</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="phase blue"></span>735+</td><td>ridge breakout</td><td>momentum confirmation</td></tr>
+              <tr><td><span class="phase"></span>720-735</td><td>pinning shelf</td><td>fade exhaustion</td></tr>
+              <tr><td><span class="phase"></span>711-720</td><td>survey zone</td><td>wait for acceptance</td></tr>
+              <tr><td><span class="phase red"></span>below 700</td><td>fault slip</td><td>risk expands lower</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section class="atlas-grid" style="margin-top: 18px">
+      <article class="plate">
+        <span class="plate-number">PLATE 05</span>
+        <h2>Scenario Compass</h2>
+        <div class="scenario-wheel">
+          <div class="wheel" aria-hidden="true"></div>
+          <ul class="scenario-list">
+            <li style="border-color: var(--blue)">Blue quadrant: reclaim 735 and the map opens toward the upper shelf.</li>
+            <li style="border-color: var(--acid)">Acid quadrant: hold 720 and expect pinning, compression, and failed breaks.</li>
+            <li style="border-color: var(--red)">Red quadrant: lose 700 and the terrain changes from range to slide.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="plate">
+        <span class="plate-number">PLATE 06</span>
+        <h2>Takeaway Inscription</h2>
+        <p>
+          The report reads the chain as geography. Price is not just above or below
+          a line; it is traveling across shelves, ridges, and faults. That framing
+          makes the static page useful even without live animation: the reader can
+          see where behavior should change before needing another quote.
+        </p>
+      </article>
+    </section>
+
+    <footer class="legend-strip">
+      <div><span class="swatch blue"></span>positive shelf</div>
+      <div><span class="swatch red"></span>negative fault</div>
+      <div><span class="swatch acid"></span>survey pin</div>
+      <div><span class="swatch gold"></span>zero gamma meridian</div>
+    </footer>
+  </main>
+</body>
+</html>

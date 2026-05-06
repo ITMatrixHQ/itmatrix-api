@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exchange Floor Ledger Template</title>
+  <style>
+    :root {
+      --bg: #111417;
+      --surface: #f3ead7;
+      --ink: #171717;
+      --muted: #5d5a51;
+      --line: #171717;
+      --accent: #0aa7d6;
+      --positive: #138d4e;
+      --negative: #d5412b;
+      --pivot: #ffb000;
+      --display: Impact, "Arial Black", sans-serif;
+      --body: "Arial Narrow", Arial, sans-serif;
+      --mono: "Cascadia Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: repeating-linear-gradient(45deg, #111417 0 18px, #171d21 18px 36px); font: 700 18px/1.25 var(--body); }
+    .board { width: min(1420px, calc(100% - 28px)); margin: 0 auto; padding: 24px 0; }
+    .marquee { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: stretch; margin-bottom: 14px; }
+    .ticket, .slip, .tape, .notice { border: 4px solid var(--line); background: var(--surface); box-shadow: 8px 8px 0 rgba(0, 0, 0, .42); }
+    .ticket { padding: 18px; transform: rotate(-.7deg); }
+    h1 { margin: 0; font: 900 clamp(3rem, 10vw, 9rem)/.78 var(--display); letter-spacing: -.04em; text-transform: uppercase; }
+    .stamp { display: grid; place-items: center; width: 230px; padding: 18px; color: var(--surface); background: var(--negative); font: 900 2rem var(--display); text-transform: uppercase; transform: rotate(2deg); }
+    .ticker-tape { display: grid; grid-template-columns: repeat(6, max-content); gap: 8px; overflow: hidden; margin: 12px 0; }
+    .tape { padding: 10px 14px; white-space: nowrap; font-family: var(--mono); }
+    .floor { display: grid; grid-template-columns: 1.4fr .6fr; gap: 14px; }
+    .ladder { display: grid; gap: 7px; padding: 18px; }
+    .row { display: grid; grid-template-columns: 90px 1fr 110px; gap: 10px; align-items: center; }
+    .bar { height: 28px; border: 3px solid var(--line); background: linear-gradient(90deg, var(--negative) 0 var(--neg), var(--pivot) var(--neg) var(--mid), var(--accent) var(--mid)); }
+    .notice { padding: 18px; background: var(--pivot); transform: rotate(.8deg); }
+    .notice h2 { margin: 0 0 12px; font: 900 2.4rem/.85 var(--display); text-transform: uppercase; }
+    .notice li { margin: 10px 0; }
+    @media (max-width: 900px) { .marquee, .floor { grid-template-columns: 1fr; } .stamp { width: auto; } }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="marquee">
+      <section class="ticket">
+        <p>34% common / trading pit notice board</p>
+        <h1>{{SYMBOL}} Open-Outcry Ledger</h1>
+      </section>
+      <aside class="stamp">Live Bias</aside>
+    </header>
+    <section class="ticker-tape">
+      <div class="tape">SPOT {{SPOT}}</div>
+      <div class="tape">PIVOT {{PIVOT}}</div>
+      <div class="tape">NET {{NET_GEX}}</div>
+      <div class="tape">ZERO {{ZERO_GAMMA}}</div>
+      <div class="tape">RES {{RESISTANCE}}</div>
+      <div class="tape">SUP {{SUPPORT}}</div>
+    </section>
+    <section class="floor">
+      <article class="slip ladder">
+        <div class="row"><b>735</b><div class="bar" style="--neg: 8%; --mid: 74%"></div><span>+42M</span></div>
+        <div class="row"><b>725</b><div class="bar" style="--neg: 21%; --mid: 63%"></div><span>+17M</span></div>
+        <div class="row"><b>720</b><div class="bar" style="--neg: 34%; --mid: 54%"></div><span>+9M</span></div>
+        <div class="row"><b>711</b><div class="bar" style="--neg: 50%; --mid: 51%"></div><span>0</span></div>
+        <div class="row"><b>700</b><div class="bar" style="--neg: 78%; --mid: 81%"></div><span>-22M</span></div>
+      </article>
+      <aside class="notice">
+        <h2>Floor Read</h2>
+        <ul>
+          <li>Above pivot: crowd leans toward pinning.</li>
+          <li>Below support: bids thin and range expands.</li>
+          <li>Inside band: trade edges, not middle.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

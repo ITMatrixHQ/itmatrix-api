@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 [project]
 name = "mhq"
 version = "0.0.1"
-description = "Python client for the ITMatrix public API."
+description = "Python client for the MHQ public API."
 authors = [{name = "Charles Marks", email = "charlesmarksco@gmail.com"}]
 readme = "api.md"
 requires-python = ">=3.10"

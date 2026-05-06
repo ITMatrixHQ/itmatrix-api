@@ -1,0 +1,57 @@
+<!-- Ranked visualization fragments for bespoke static finance reports. -->
+
+<!-- 62% common: stratified bars. Good for GEX ladders, fundamentals mix, or volume tiers. -->
+<section id="stratified-bars" class="viz-fragment">
+  <style>
+    .strata { display: grid; gap: 6px; font: 800 13px/1.2 "Cascadia Mono", monospace; }
+    .strata-row { display: grid; grid-template-columns: 72px 1fr 96px; gap: 10px; align-items: center; }
+    .strata-bar { height: 20px; border: 2px solid currentColor; background: linear-gradient(90deg, var(--negative) 0 var(--neg), var(--pivot) var(--neg) var(--mid), var(--positive) var(--mid)); }
+  </style>
+  <div class="strata">
+    <div class="strata-row"><b>735</b><i class="strata-bar" style="--neg: 8%; --mid: 76%"></i><span>+42M</span></div>
+    <div class="strata-row"><b>720</b><i class="strata-bar" style="--neg: 34%; --mid: 54%"></i><span>+9M</span></div>
+    <div class="strata-row"><b>700</b><i class="strata-bar" style="--neg: 78%; --mid: 81%"></i><span>-22M</span></div>
+  </div>
+</section>
+
+<!-- 41% common: tape river. Good for price/history path through regimes. -->
+<section id="tape-river" class="viz-fragment">
+  <style>
+    .tape-river svg { width: 100%; height: auto; overflow: visible; }
+    .tape-river path { fill: none; stroke: var(--accent); stroke-width: 18; stroke-linecap: round; }
+    .tape-river text { fill: var(--ink); font: 900 13px "Cascadia Mono", monospace; }
+  </style>
+  <svg viewBox="0 0 620 180" role="img" aria-label="Tape river">
+    <path d="M20 122 C130 18, 194 34, 284 90 S470 172, 600 42"></path>
+    <text x="34" y="152">support</text>
+    <text x="268" y="76">pivot</text>
+    <text x="502" y="34">resistance</text>
+  </svg>
+</section>
+
+<!-- 23% common: option constellation. Good for connected levels and expirations. -->
+<section id="option-constellation" class="viz-fragment">
+  <style>
+    .constellation { position: relative; min-height: 320px; border: 1px solid var(--line); border-radius: 50%; }
+    .star { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); border-radius: 50%; transform: translate(-50%, -50%); background: var(--c); box-shadow: 0 0 28px var(--c); }
+    .star-label { position: absolute; left: calc(var(--x) + 16px); top: var(--y); font: 900 12px "Cascadia Mono", monospace; }
+  </style>
+  <div class="constellation">
+    <i class="star" style="--x: 50%; --y: 50%; --s: 54px; --c: var(--pivot)"></i><b class="star-label" style="--x: 50%; --y: 50%">pivot</b>
+    <i class="star" style="--x: 70%; --y: 28%; --s: 38px; --c: var(--positive)"></i><b class="star-label" style="--x: 70%; --y: 28%">res</b>
+    <i class="star" style="--x: 28%; --y: 72%; --s: 44px; --c: var(--negative)"></i><b class="star-label" style="--x: 28%; --y: 72%">sup</b>
+  </div>
+</section>
+
+<!-- 11% common: liquidity fossil. Good for unusual static strike-core storytelling. -->
+<section id="liquidity-fossil" class="viz-fragment">
+  <style>
+    .fossil { padding: 22px; border: 2px solid var(--ink); border-radius: 48% 52% 47% 53%; background: repeating-radial-gradient(ellipse, transparent 0 18px, color-mix(in srgb, var(--ink) 22%, transparent) 19px 21px); }
+    .fossil mark { display: inline-block; margin: 8px; padding: 8px 12px; border: 2px solid var(--ink); border-radius: 999px; color: var(--ink); background: var(--pivot); font: 900 12px "Cascadia Mono", monospace; }
+  </style>
+  <div class="fossil">
+    <mark>735 +ridge</mark>
+    <mark>720 pivot fossil</mark>
+    <mark>700 fault imprint</mark>
+  </div>
+</section>
