@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mhq"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python client for the MHQ public API."
 authors = [{name = "Charles Marks", email = "charlesmarksco@gmail.com"}]
 readme = "api.md"
