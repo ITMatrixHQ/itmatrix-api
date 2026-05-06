@@ -1,0 +1,83 @@
+/*
+Outlier palette catalog for self-contained finance reports.
+Apply one class to <body>, then consume the CSS variables in custom report CSS.
+Commonness scores are included to help agents choose familiar vs rare aesthetics.
+*/
+
+.palette-sovereign-desk {
+  /* 66% common: polished institutional desk note */
+  --bg: #f5eddc;
+  --surface: #fff9ec;
+  --ink: #131f35;
+  --muted: #6f6a5f;
+  --line: #c7b58f;
+  --accent: #173f7a;
+  --positive: #176b45;
+  --negative: #8d1f2d;
+  --pivot: #b98222;
+}
+
+.palette-circuit-pit {
+  /* 49% common: active trading pit with industrial contrast */
+  --bg: #111417;
+  --surface: #1c2227;
+  --ink: #f4f7f8;
+  --muted: #9ba6ad;
+  --line: #34434d;
+  --accent: #20d7ff;
+  --positive: #45e07f;
+  --negative: #ff654d;
+  --pivot: #ffb000;
+}
+
+.palette-miso-macro {
+  /* 31% common: calm macro/fundamental briefing */
+  --bg: #eadfc8;
+  --surface: #fbf3df;
+  --ink: #1b1712;
+  --muted: #6d6253;
+  --line: #cbb995;
+  --accent: #274f42;
+  --positive: #3f7d45;
+  --negative: #b23b43;
+  --pivot: #c9872f;
+}
+
+.palette-polar-auction {
+  /* 17% common: frozen auction book / rates lab */
+  --bg: #e8f2f5;
+  --surface: #fbfeff;
+  --ink: #071015;
+  --muted: #5c707a;
+  --line: #a9c6cf;
+  --accent: #0d76a8;
+  --positive: #00a878;
+  --negative: #d63c87;
+  --pivot: #9cffd2;
+}
+
+.palette-ultraviolet-specimen {
+  /* 8% common: reagent-lit liquidity laboratory */
+  --bg: #080713;
+  --surface: #111025;
+  --ink: #f5f1ff;
+  --muted: #a69bc4;
+  --line: #373052;
+  --accent: #9c6bff;
+  --positive: #d6ff42;
+  --negative: #ff3f6e;
+  --pivot: #00f0ff;
+}
+
+.palette-desert-exchange {
+  /* 3% common: cartographic field notebook for market terrain */
+  --bg: #e8d3a5;
+  --surface: #f3e5bd;
+  --ink: #20140b;
+  --muted: #76664d;
+  --line: #9b7d4f;
+  --accent: #195c83;
+  --positive: #2f6b3f;
+  --negative: #9a3a24;
+  --pivot: #efe85a;
+}

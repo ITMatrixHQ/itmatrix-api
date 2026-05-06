@@ -1,9 +1,9 @@
 tests/unit/test_client.py: ClientTests - Exercises the public client package through local fixtures, covering key resolution, sync and async `/api/v1` method routing, return conversion modes, transport errors, and WebSocket subscriptions without relying on the live deployment URL.
 - mhq.client: General public `ITMatrixV1` behavior.
-	- ITMatrixV1.__init__: Covers explicit keys, `.itmkey` files, environment keys, default/live base URL constants, environment base URLs, async alias handling, and unknown option rejection.
+	- ITMatrixV1.__init__: Covers explicit keys, `.mhqkey` files, environment keys, default/live base URL constants, environment base URLs, async alias handling, and unknown option rejection.
 	- ITMatrixV1.available: Covers `symbols`, `expirations`, and fundamentals ticker availability in sync and async modes, including missing-symbol and unknown-endpoint errors.
 	- ITMatrixV1 spot/option/gex/gex_matrix/gex_history/stock_bars/option_bars/fundamentals/economy: Covers documented public endpoint path construction and msgspec result decoding.
-	- ITMatrixV1 live smoke: Covers the actual public base URL through `MHQ_TEST_LIVE_V1=1`, using `.itmkey` and `/symbols`.
+	- ITMatrixV1 live smoke: Covers the actual public base URL through `MHQ_TEST_LIVE_V1=1`, using `.mhqkey` and `/symbols`.
 	- ITMatrixV1.close/context managers: Covers sync and async close paths plus context-manager entry/exit behavior.
 - mhq.codec: General response decoding and return conversion behavior.
 	- decode_public: Covers standard envelopes, direct payloads, envelope errors, and middleware-style error bodies.
@@ -19,3 +19,15 @@ tests/unit/test_client.py: ClientTests - Exercises the public client package thr
 
 Unreachable or intentionally residual coverage notes:
 - mhq.codec has one partial branch in column-name de-duplication where every practical non-empty tabular conversion still enters the first-seen path; total package coverage remains 99%.
+
+tests/unit/mhq_data.ps1, tests/unit/mhq_data.sh, tests/unit/mhq_data.cmd: Command-line live fixture clones - Exercise the standalone v1 dump script through shell-native entry points, writing the full command surface into `tests/unit/scriptjson/` with `files.json` as the aggregate output.
+- skills/mhq-reports/scripts/mhq_data.py: General standalone CLI behavior.
+	- symbols/fundamentals-tickers/expirations/spot/option: Covers discovery and single-resource public v1 commands with explicit output paths.
+	- gex/gex-matrix/gex-history/stock-bars/option-bars: Covers market-data commands and required query argument forwarding.
+	- fundamentals/economy: Covers every symbol fundamentals endpoint and each economy endpoint with bounded limits.
+	- all: Covers the aggregate static-site JSON dump, including selected symbols, fundamentals tickers, option tickers, expirations, bar windows, and economy limits.
+
+skills/mhq-reports/examples/demo.html: Static report fixture - Provides a generic, non-standard full-report artifact for visual inspection and structural checks without biasing agents toward the default generator style.
+- skills/mhq-reports/scripts/mhq_report.py: General static HTML report generation behavior.
+	- CLI generation: Covers aggregate `mhq_data.py` input loading, symbol/expiration selection, theme selection, output file creation, and self-contained HTML emission.
+	- Market structure helpers: Covers GEX row flattening, inferred support/resistance/pivot levels, bar chart rows, heat cells, level map markup, metric cards, scenario cards, sparklines, and fundamentals table rendering.

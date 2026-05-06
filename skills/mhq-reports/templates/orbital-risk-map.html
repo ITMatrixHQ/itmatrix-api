@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orbital Risk Map Template</title>
+  <style>
+    :root {
+      --bg: #050812;
+      --surface: #101827;
+      --ink: #f7fbff;
+      --muted: #91a1bd;
+      --orbit: #2e496f;
+      --accent: #7dd3fc;
+      --positive: #a7f3d0;
+      --negative: #fb7185;
+      --pivot: #fde047;
+      --display: "Sora", "Segoe UI", sans-serif;
+      --body: "IBM Plex Sans", "Segoe UI", sans-serif;
+      --mono: "Cascadia Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: radial-gradient(circle at 50% 38%, #15223a, var(--bg) 58%); font: 500 16px/1.45 var(--body); }
+    .space { width: min(1360px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 46px; }
+    .hero { display: grid; grid-template-columns: .8fr 1.2fr; gap: 22px; align-items: center; }
+    h1 { margin: 0; font: 900 clamp(3rem, 7vw, 7.4rem)/.88 var(--display); letter-spacing: -.08em; }
+    .meta { color: var(--muted); font-family: var(--mono); text-transform: uppercase; letter-spacing: .14em; }
+    .system { position: relative; aspect-ratio: 1; min-height: 680px; border-radius: 50%; }
+    .orbit { position: absolute; inset: var(--inset); border: 1px solid var(--orbit); border-radius: 50%; }
+    .planet { position: absolute; left: var(--x); top: var(--y); width: var(--s); height: var(--s); display: grid; place-items: center; border-radius: 50%; color: #081014; background: var(--c); box-shadow: 0 0 44px color-mix(in srgb, var(--c) 58%, transparent); font: 900 .74rem var(--mono); text-align: center; transform: translate(-50%, -50%); }
+    .sun { --s: 168px; --x: 50%; --y: 50%; --c: var(--pivot); font-size: 1rem; }
+    .panel-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .panel { min-height: 190px; padding: 18px; border: 1px solid var(--orbit); border-radius: 999px 999px 32px 32px; background: rgba(16, 24, 39, .78); }
+    .panel h2 { margin: 0 0 10px; color: var(--accent); font: 900 .78rem var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+    .panel strong { display: block; font: 900 2.4rem/.9 var(--display); }
+    @media (max-width: 980px) { .hero, .panel-row { grid-template-columns: 1fr; } .system { min-height: 520px; } }
+  </style>
+</head>
+<body>
+  <main class="space">
+    <section class="hero">
+      <div>
+        <p class="meta">19% common / radial market map</p>
+        <h1>{{SYMBOL}} Orbital Risk Map</h1>
+        <p>Use this when strikes, expirations, and scenarios should feel like related bodies in one gravity system.</p>
+      </div>
+      <div class="system">
+        <div class="orbit" style="--inset: 7%"></div>
+        <div class="orbit" style="--inset: 21%"></div>
+        <div class="orbit" style="--inset: 35%"></div>
+        <div class="planet sun">PIVOT<br>{{PIVOT}}</div>
+        <div class="planet" style="--x: 77%; --y: 29%; --s: 112px; --c: var(--accent)">RES<br>{{RESISTANCE}}</div>
+        <div class="planet" style="--x: 25%; --y: 70%; --s: 124px; --c: var(--negative)">SUP<br>{{SUPPORT}}</div>
+        <div class="planet" style="--x: 64%; --y: 78%; --s: 92px; --c: var(--positive)">GEX<br>{{NET_GEX}}</div>
+        <div class="planet" style="--x: 34%; --y: 27%; --s: 86px; --c: #c4b5fd">ZERO<br>{{ZERO_GAMMA}}</div>
+      </div>
+    </section>
+    <section class="panel-row">
+      <article class="panel"><h2>Gravity</h2><strong>{{NET_GEX}}</strong><p>Positive fields pull price into slower ranges.</p></article>
+      <article class="panel"><h2>Escape</h2><strong>{{RESISTANCE}}</strong><p>Reclaiming this orbit changes the map.</p></article>
+      <article class="panel"><h2>Re-entry</h2><strong>{{SUPPORT}}</strong><p>Losing this orbit increases downside heat.</p></article>
+    </section>
+  </main>
+</body>
+</html>

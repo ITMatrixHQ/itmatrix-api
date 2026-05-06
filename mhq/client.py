@@ -49,7 +49,7 @@ _ECONOMY_SCHEMAS: dict[str, Any] = {
 
 
 class ITMatrixV1:
-    """Sync or async client for ITMatrix `/api/v1` endpoints."""
+    """Sync or async client for MHQ `/api/v1` endpoints."""
 
     __slots__ = (
         "_api_prefix",

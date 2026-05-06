@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spectral Liquidity Lab Template</title>
+  <style>
+    :root {
+      --bg: #080713;
+      --surface: #111025;
+      --ink: #f5f1ff;
+      --muted: #a69bc4;
+      --line: #373052;
+      --accent: #9c6bff;
+      --positive: #d6ff42;
+      --negative: #ff3f6e;
+      --pivot: #00f0ff;
+      --display: "Arial Black", "Sora", sans-serif;
+      --body: "Segoe UI", sans-serif;
+      --mono: "Cascadia Mono", Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: radial-gradient(circle at 28% 22%, rgba(156, 107, 255, .36), transparent 26rem), var(--bg); font: 500 16px/1.45 var(--body); }
+    .lab { width: min(1450px, calc(100% - 32px)); margin: 0 auto; padding: 30px 0 46px; }
+    .specimen { display: grid; grid-template-columns: 1fr 420px; gap: 18px; align-items: stretch; }
+    .slide, .readout, .gel, .log { border: 1px solid var(--line); background: rgba(17, 16, 37, .78); box-shadow: 0 0 60px rgba(156, 107, 255, .12); }
+    .slide { min-height: 520px; padding: 24px; clip-path: polygon(0 0, 94% 0, 100% 11%, 100% 100%, 6% 100%, 0 89%); }
+    .label { color: var(--positive); font: 900 .78rem var(--mono); letter-spacing: .18em; text-transform: uppercase; }
+    h1 { max-width: 920px; margin: 10px 0 22px; font: 900 clamp(3.2rem, 9vw, 9rem)/.76 var(--display); letter-spacing: -.09em; text-transform: uppercase; }
+    .spectrum { position: relative; min-height: 280px; border: 1px solid var(--line); background: repeating-linear-gradient(90deg, transparent 0 28px, rgba(255, 255, 255, .05) 28px 30px); }
+    .band { position: absolute; top: var(--top); left: 6%; width: var(--w); height: 24px; background: var(--c); filter: blur(.2px) drop-shadow(0 0 18px var(--c)); }
+    .readout { padding: 18px; }
+    .readout strong { display: block; color: var(--pivot); font: 900 4rem/.8 var(--display); }
+    .stack { display: grid; gap: 18px; }
+    .gel { padding: 18px; }
+    .gel-row { height: 32px; margin: 8px 0; background: linear-gradient(90deg, var(--negative), transparent 35%, var(--positive)); transform: skewX(-16deg); opacity: var(--a); }
+    .log { padding: 18px; font-family: var(--mono); }
+    .log p { margin: 10px 0; color: var(--muted); }
+    @media (max-width: 980px) { .specimen { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="lab">
+    <section class="specimen">
+      <article class="slide">
+        <p class="label">7% common / ultraviolet specimen report</p>
+        <h1>{{SYMBOL}} Liquidity Spectrum</h1>
+        <div class="spectrum">
+          <div class="band" style="--top: 18%; --w: 78%; --c: var(--positive)"></div>
+          <div class="band" style="--top: 36%; --w: 54%; --c: var(--pivot)"></div>
+          <div class="band" style="--top: 55%; --w: 62%; --c: var(--accent)"></div>
+          <div class="band" style="--top: 74%; --w: 38%; --c: var(--negative)"></div>
+        </div>
+      </article>
+      <aside class="stack">
+        <div class="readout"><span class="label">dominant wavelength</span><strong>{{PIVOT}}</strong><p>Pivot level fluoresces when price compresses around it.</p></div>
+        <div class="gel">
+          <span class="label">strike gel</span>
+          <div class="gel-row" style="--a: .92"></div>
+          <div class="gel-row" style="--a: .72"></div>
+          <div class="gel-row" style="--a: .48"></div>
+          <div class="gel-row" style="--a: .35"></div>
+        </div>
+        <div class="log">
+          <span class="label">lab notes</span>
+          <p>Net GEX: {{NET_GEX}}</p>
+          <p>Resistance reagent: {{RESISTANCE}}</p>
+          <p>Support reagent: {{SUPPORT}}</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>
